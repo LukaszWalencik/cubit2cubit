@@ -1,10 +1,23 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 part of 'color_cubit.dart';
 
-sealed class ColorState extends Equatable {
-  const ColorState();
+class ColorState {
+  final Color color;
+
+  ColorState(this.color);
+
+  factory ColorState.initial() {
+    return ColorState(Colors.red);
+  }
+
+  ColorState copyWith({
+    Color? color,
+  }) {
+    return ColorState(
+      color ?? this.color,
+    );
+  }
 
   @override
-  List<Object> get props => [];
+  String toString() => 'ColorState(color: $color)';
 }
-
-final class ColorInitial extends ColorState {}

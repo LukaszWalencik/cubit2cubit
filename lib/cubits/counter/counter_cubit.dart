@@ -29,6 +29,10 @@ class CounterCubit extends Cubit<CounterState> {
     });
   }
 
+  void changeCounter() {
+    emit(state.copyWith(counter: state.counter + incrementSize));
+  }
+
   @override
   Future<void> close() {
     colorSubscription.cancel();

@@ -1,4 +1,5 @@
 import 'package:cubit2cubit/cubits/color/color_cubit.dart';
+import 'package:cubit2cubit/cubits/counter/counter_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -14,10 +15,16 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => ColorCubit(),
-      child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: 'Cubit 2 Cubit',
-          home: HomePage()),
+      child: BlocProvider(
+        create: (context) => CounterCubit(
+          context.read()<ColorCubit>(),
+          context.read()<ColorCubit>(),
+        ),
+        child: MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'Cubit 2 Cubit',
+            home: HomePage()),
+      ),
     );
   }
 }

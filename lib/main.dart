@@ -13,18 +13,19 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => ColorCubit(),
-      child: BlocProvider(
-        create: (context) => CounterCubit(
-          context.read()<ColorCubit>(),
-          context.read()<ColorCubit>(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => ColorCubit(),
         ),
-        child: MaterialApp(
-            debugShowCheckedModeBanner: false,
-            title: 'Cubit 2 Cubit',
-            home: HomePage()),
-      ),
+        BlocProvider(
+            create: (context) =>
+                CounterCubit(colorCubit: context.read<ColorCubit>())),
+      ],
+      child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Cubit 2 Cubit',
+          home: HomePage()),
     );
   }
 }
@@ -35,19 +36,23 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.red,
+      backgroundColor: context.watch<ColorCubit>().state.color,
       body: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  context.read<ColorCubit>().changeColor();
+                },
                 child: Text(
                   'Change color',
                   style: TextStyle(fontSize: 24),
                 )),
             SizedBox(height: 30),
             Text(
-              '0',
+              // '0',
+              '${context.watch<CounterCubit>().state.counter}',
               style: TextStyle(
                   fontSize: 52,
                   fontWeight: FontWeight.bold,
@@ -55,7 +60,9 @@ class HomePage extends StatelessWidget {
             ),
             SizedBox(height: 30),
             ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  context.read<CounterCubit>().changeCounter();
+                },
                 child: Text(
                   'Increment counter',
                   style: TextStyle(fontSize: 24),

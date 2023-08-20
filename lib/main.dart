@@ -18,9 +18,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) => ColorCubit(),
         ),
-        BlocProvider(
-            create: (context) =>
-                CounterCubit(colorCubit: context.read<ColorCubit>())),
+        BlocProvider(create: (context) => CounterCubit()),
       ],
       child: MaterialApp(
           debugShowCheckedModeBanner: false,
@@ -30,44 +28,64 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int incrementSize = 1;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: context.watch<ColorCubit>().state.color,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-                onPressed: () {
-                  context.read<ColorCubit>().changeColor();
-                },
-                child: Text(
-                  'Change color',
-                  style: TextStyle(fontSize: 24),
-                )),
-            SizedBox(height: 30),
-            Text(
-              // '0',
-              '${context.watch<CounterCubit>().state.counter}',
-              style: TextStyle(
-                  fontSize: 52,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white),
-            ),
-            SizedBox(height: 30),
-            ElevatedButton(
-                onPressed: () {
-                  context.read<CounterCubit>().changeCounter();
-                },
-                child: Text(
-                  'Increment counter',
-                  style: TextStyle(fontSize: 24),
-                )),
-          ],
+      body: BlocListener<ColorCubit, ColorState>(
+        listener: (context, state) {
+          if (state.color == Colors.red) {
+            incrementSize = 1;
+          } else if (state.color == Colors.green) {
+            incrementSize = 10;
+          } else if (state.color == Colors.blue) {
+            incrementSize = 100;
+          } else if (state.color == Colors.black) {
+            context.read<CounterCubit>().changeCounter(-100);
+            incrementSize = -100;
+          }
+        },
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                  onPressed: () {
+                    context.read<ColorCubit>().changeColor();
+                  },
+                  child: Text(
+                    'Change color',
+                    style: TextStyle(fontSize: 24),
+                  )),
+              SizedBox(height: 30),
+              Text(
+                // '0',
+                '${context.watch<CounterCubit>().state.counter}',
+                style: TextStyle(
+                    fontSize: 52,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
+              ),
+              SizedBox(height: 30),
+              ElevatedButton(
+                  onPressed: () {
+                    context.read<CounterCubit>().changeCounter(incrementSize);
+                  },
+                  child: Text(
+                    'Increment counter',
+                    style: TextStyle(fontSize: 24),
+                  )),
+            ],
+          ),
         ),
       ),
     );
